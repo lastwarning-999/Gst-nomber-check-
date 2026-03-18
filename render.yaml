@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: gst-compliance-app
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: GOOGLE_COOKIES_JSON
+        sync: false   # You must set this manually in Render dashboard
+    plan: free
