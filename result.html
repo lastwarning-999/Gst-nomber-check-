@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Report – GST {{ gstin }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .premium-shadow {
+            box-shadow: 0 20px 40px -10px rgba(0, 20, 30, 0.3);
+        }
+        .data-row {
+            @apply flex justify-between py-3 border-b border-white/10 text-sm;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 p-6 flex items-start justify-center">
+    <div class="w-full max-w-4xl my-8">
+        <!-- Back button -->
+        <a href="/" class="inline-flex items-center text-white/80 hover:text-white mb-6 transition">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            New Search
+        </a>
+
+        <!-- Main Report Card -->
+        <div class="glass-card premium-shadow rounded-3xl p-8 text-white">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">
+                    Compliance Report
+                </h2>
+                <p class="text-indigo-100 text-lg mt-1 break-all">{{ gstin }}</p>
+            </div>
+
+            <!-- Two column grid for key info -->
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-sm border border-white/10">
+                    <div class="text-indigo-200 text-xs uppercase tracking-wider mb-2">Taxpayer Info</div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between"><span class="text-white/70">Legal Name</span><span class="font-medium">{{ taxpayer.get('lgnm', 'N/A') }}</span></div>
+                        <div class="flex justify-between"><span class="text-white/70">Trade Name</span><span class="font-medium">{{ taxpayer.get('tradeNam', 'N/A') }}</span></div>
+                        <div class="flex justify-between"><span class="text-white/70">PAN</span><span class="font-medium">{{ pan }}</span></div>
+                        <div class="flex justify-between"><span class="text-white/70">Status</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs {% if taxpayer.get('sts') == 'Active' %}bg-green-500/30 text-green-200{% else %}bg-yellow-500/30{% endif %}">
+                                {{ taxpayer.get('sts', 'N/A') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-sm border border-white/10">
+                    <div class="text-indigo-200 text-xs uppercase tracking-wider mb-2">Registration</div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between"><span class="text-white/70">Registration Date</span><span>{{ taxpayer.get('rgdt', 'N/A') }}</span></div>
+                        <div class="flex justify-between"><span class="text-white/70">Cancellation Date</span><span>{{ taxpayer.get('cxdt', 'N/A') }}</span></div>
+                        <div class="flex justify-between"><span class="text-white/70">Last Updated</span><span>{{ taxpayer.get('lstupdt', 'N/A') }}</span></div>
+                        <div class="flex justify-between"><span class="text-white/70">Constitution</span><span>{{ taxpayer.get('ctb', 'N/A') }}</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jurisdiction -->
+            <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-sm border border-white/10 mb-6">
+                <div class="text-indigo-200 text-xs uppercase tracking-wider mb-3">Jurisdiction</div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div><span class="text-white/70 block">State Tax:</span> <span class="font-medium">{{ taxpayer.get('stj', 'N/A') }} ({{ taxpayer.get('stjCd', '') }})</span></div>
+                    <div><span class="text-white/70 block">Central Tax:</span> <span class="font-medium">{{ taxpayer.get('ctj', 'N/A') }} ({{ taxpayer.get('ctjCd', '') }})</span></div>
+                </div>
+            </div>
+
+            <!-- Principal Address -->
+            <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-sm border border-white/10 mb-6">
+                <div class="text-indigo-200 text-xs uppercase tracking-wider mb-3">Principal Address</div>
+                {% set addr = taxpayer.get('pradr', {}).get('addr', {}) %}
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div><span class="text-white/70">Building No.:</span> {{ addr.get('bno', '') }}</div>
+                    <div><span class="text-white/70">Building Name:</span> {{ addr.get('bnm', '') }}</div>
+                    <div><span class="text-white/70">Street:</span> {{ addr.get('st', '') }}</div>
+                    <div><span class="text-white/70">Location:</span> {{ addr.get('loc', '') }}</div>
+                    <div><span class="text-white/70">District:</span> {{ addr.get('dst', '') }}</div>
+                    <div><span class="text-white/70">State:</span> {{ addr.get('stcd', '') }}</div>
+                    <div><span class="text-white/70">PIN Code:</span> {{ addr.get('pncd', '') }}</div>
+                    <div><span class="text-white/70">Floor No.:</span> {{ addr.get('flno', '') }}</div>
+                    <div><span class="text-white/70">Landmark:</span> {{ addr.get('lm', 'N/A') }}</div>
+                    <div><span class="text-white/70">Nature of Business:</span> {{ taxpayer.get('pradr', {}).get('ntr', 'N/A') }}</div>
+                </div>
+            </div>
+
+            <!-- Nature of Business Activities -->
+            {% if taxpayer.get('nba') %}
+            <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-sm border border-white/10 mb-6">
+                <div class="text-indigo-200 text-xs uppercase tracking-wider mb-3">Business Activities</div>
+                <ul class="list-disc list-inside space-y-1 text-sm">
+                    {% for act in taxpayer.get('nba', []) %}
+                    <li>{{ act }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Filing Frequency -->
+            <div class="bg-white/5 rounded-2xl p-5 backdrop-blur-sm border border-white/10">
+                <div class="text-indigo-200 text-xs uppercase tracking-wider mb-2">Filing Frequency</div>
+                <div class="text-xl font-semibold">{{ data.get('compliance', {}).get('filingFrequency', 'N/A') }}</div>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-8 text-xs text-indigo-200/60 text-center">
+                Data sourced from ClearTax • Premium Interface
+            </div>
+        </div>
+    </div>
+</body>
+</html>
